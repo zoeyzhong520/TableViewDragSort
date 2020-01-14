@@ -46,10 +46,6 @@ extension ViewController {
     private func setUI() {
         view.addSubview(tableView)
     }
-    
-    @objc private func editAction() {
-        tableView.isEditing = !tableView.isEditing
-    }
 }
 
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
