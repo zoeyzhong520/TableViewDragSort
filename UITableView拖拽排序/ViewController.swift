@@ -13,6 +13,8 @@ let editReuseIdentifier = "editReuseIdentifier"
 
 class ViewController: UIViewController {
     
+    private var switchStatus = false
+    
     private var dataSource = [
         "第一个",
         "第二个",
@@ -26,6 +28,7 @@ class ViewController: UIViewController {
     
     private lazy var tableView: UITableView = {
         let tb = UITableView(frame: view.bounds, style: .grouped)
+        tb.isEditing = true
         tb.delegate = self
         tb.dataSource = self
         tb.register(UITableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
@@ -54,15 +57,16 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 1 : dataSource.count
+        return section == 0 ? 1 : (switchStatus ? dataSource.count : 0)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: editReuseIdentifier) as? EditCell else { return EditCell(style: .default, reuseIdentifier: editReuseIdentifier) }
             cell.selectionStyle = .none
-            cell.switchBlock = { value in
-                tableView.setEditing(value, animated: true)
+            cell.switchBlock = { [weak self] value in
+                self?.switchStatus = value
+                tableView.reloadSections(IndexSet(arrayLiteral: 1), with: .fade)
             }
             return cell
         }
